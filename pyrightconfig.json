@@ -1,0 +1,11 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "include": [
+    "src"
+  ],
+  "stubPath": "typings",
+  "typeCheckingMode": "basic",
+  "reportMissingImports": true,
+  "pythonVersion": "3.12"
+}
