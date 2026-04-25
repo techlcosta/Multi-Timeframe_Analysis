@@ -1,0 +1,81 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    name: Build Windows Release
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "pnpm"
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install frontend dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: frontend
+
+      - name: Install Python dependencies
+        run: uv sync
+
+      - name: Build desktop executable
+        run: uv run python -m src.scripts.build
+
+      - name: Prepare release asset
+        id: asset
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $assetName = "FXStrategies-$tag-windows-x64.exe"
+          Copy-Item "dist\FXStrategies.exe" "dist\$assetName" -Force
+          "name=$assetName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "path=dist\$assetName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.asset.outputs.name }}
+          path: ${{ steps.asset.outputs.path }}
+          if-no-files-found: error
+
+      - name: Create GitHub release and upload asset
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $assetPath = "${{ steps.asset.outputs.path }}"
+          gh release view $tag *> $null
+
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $assetPath --clobber
+          }
+          else {
+            gh release create $tag $assetPath --title $tag --generate-notes
+          }

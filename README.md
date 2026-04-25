@@ -175,6 +175,19 @@ fx_strategies/
    └─ light.png
 ```
 
+## Commit Convention
+
+This repository follows a Conventional Commits style for commit messages.
+
+Examples:
+
+- `feat(api): add structured MT5 error responses`
+- `fix(ui): prevent pywebview callback crash`
+- `docs(readme): add multilingual project overview`
+- `ci(release): build Windows binary on version tags`
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full convention and local template setup.
+
 ---
 
 ## English
