@@ -58,7 +58,7 @@ export function SymbolSelector({ symbols }: SymbolSelectorProps) {
       <PopoverTrigger asChild>
         <Button variant="outline" size="sm" className="h-9 w-full cursor-pointer gap-2">
           <Plus className="h-4 w-4" />
-          Adicionar simbolo
+          Add symbol
         </Button>
       </PopoverTrigger>
 
@@ -66,14 +66,14 @@ export function SymbolSelector({ symbols }: SymbolSelectorProps) {
         <div className="border-b p-2">
           <div className="relative">
             <Search className="text-muted-foreground absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2" />
-            <Input placeholder="Buscar simbolo..." value={query} onChange={event => setQuery(event.target.value)} className="h-8 pl-8" />
+            <Input placeholder="Search symbol..." value={query} onChange={event => setQuery(event.target.value)} className="h-8 pl-8" />
           </div>
         </div>
 
         <div className="max-h-72 overflow-y-auto p-1">
-          {(isLoading || isFetching) && <p className="text-muted-foreground py-6 text-center text-sm">Carregando simbolos...</p>}
+          {(isLoading || isFetching) && <p className="text-muted-foreground py-6 text-center text-sm">Loading symbols...</p>}
 
-          {isError && <p className="text-muted-foreground py-6 text-center text-sm">Nao foi possivel carregar os simbolos. {error?.message}</p>}
+          {isError && <p className="text-muted-foreground py-6 text-center text-sm">Could not load symbols. {error?.message}</p>}
 
           {filtered.map(symbol => {
             const symbolName = getSymbolName(symbol)
@@ -103,7 +103,7 @@ export function SymbolSelector({ symbols }: SymbolSelectorProps) {
             )
           })}
 
-          {!isLoading && !isFetching && !isError && filtered.length === 0 && <p className="text-muted-foreground py-6 text-center text-sm">Nenhum simbolo encontrado</p>}
+          {!isLoading && !isFetching && !isError && filtered.length === 0 && <p className="text-muted-foreground py-6 text-center text-sm">No symbols found</p>}
         </div>
       </PopoverContent>
     </Popover>

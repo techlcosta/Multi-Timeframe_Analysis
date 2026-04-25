@@ -22,7 +22,7 @@ def calc_pivot_point(dataframe: pd.DataFrame, *, pivot_source: pd.DataFrame | No
     if dataframe.empty or not required_columns.issubset(dataframe.columns):
         return {
             "signal": "NEUTRAL",
-            "status": "NO_PIVO",
+            "status": "AT_PIVOT",
             "value": None,
             "pivot": None,
             "resistance_1": None,
@@ -38,7 +38,7 @@ def calc_pivot_point(dataframe: pd.DataFrame, *, pivot_source: pd.DataFrame | No
     if pivot_frame.empty or not required_columns.issubset(pivot_frame.columns):
         return {
             "signal": "NEUTRAL",
-            "status": "NO_PIVO",
+            "status": "AT_PIVOT",
             "value": latest_close,
             "pivot": None,
             "resistance_1": None,
@@ -62,15 +62,15 @@ def calc_pivot_point(dataframe: pd.DataFrame, *, pivot_source: pd.DataFrame | No
     support_2 = pivot - range_value
 
     signal: SignalName = "NEUTRAL"
-    status = "NO_PIVO"
+    status = "AT_PIVOT"
     tolerance = max(range_value * 0.05, 1e-9)
 
     if latest_close > pivot + tolerance:
         signal = "BUY"
-        status = "ACIMA_DO_PIVO"
+        status = "ABOVE_PIVOT"
     elif latest_close < pivot - tolerance:
         signal = "SELL"
-        status = "ABAIXO_DO_PIVO"
+        status = "BELOW_PIVOT"
 
     return {
         "signal": signal,

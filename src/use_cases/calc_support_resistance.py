@@ -198,16 +198,16 @@ def calc_support_resistance(dataframe: pd.DataFrame, *, swing_window: int = 2) -
 
     if support_proximity <= threshold and slope >= -slope_threshold:
         signal = "BUY"
-        status = "DEFENDEU_SUPORTE"
+        status = "HELD_SUPPORT"
     elif resistance_proximity <= threshold and slope <= slope_threshold:
         signal = "SELL"
-        status = "REJEITOU_RESISTENCIA"
+        status = "REJECTED_RESISTANCE"
     elif price_position >= 0.62 and resistance_proximity <= 0.34 and slope > slope_threshold:
         signal = "SELL"
-        status = "PRESSIONANDO_RESISTENCIA"
+        status = "PRESSING_RESISTANCE"
     elif price_position <= 0.38 and support_proximity <= 0.34 and slope < -slope_threshold:
         signal = "BUY"
-        status = "PRESSIONANDO_SUPORTE"
+        status = "PRESSING_SUPPORT"
 
     return {
         "signal": signal,

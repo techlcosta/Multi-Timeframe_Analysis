@@ -41,11 +41,11 @@ export function Layout() {
       <section className="min-h-0">
         <ScrollArea className="h-full">
           <div className="px-6 py-5">
-            {isLoading ? <div className="text-muted-foreground text-sm">Carregando indicadores...</div> : null}
+            {isLoading ? <div className="text-muted-foreground text-sm">Loading indicators...</div> : null}
 
-            {isError ? <div className="text-destructive text-sm">Nao foi possivel carregar os indicadores. {error?.message}</div> : null}
+            {isError ? <div className="text-destructive text-sm">Could not load indicators. {error?.message}</div> : null}
 
-            {!isLoading && !isError && !selectedSymbolValues ? <div className="text-muted-foreground text-sm">Nenhum simbolo salvo para analisar.</div> : null}
+            {!isLoading && !isError && !selectedSymbolValues ? <div className="text-muted-foreground text-sm">No saved symbol available for analysis.</div> : null}
 
             {!isLoading && !isError && selectedSymbolValues ? (
               <div className="space-y-4">
@@ -58,7 +58,7 @@ export function Layout() {
                         variant="outline"
                         size="sm"
                         type="button"
-                        aria-label={`Selecionar simbolo ${symbolName}`}
+                        aria-label={`Select symbol ${symbolName}`}
                         onPressedChange={pressed => {
                           if (pressed) {
                             setSelectedSymbolKey(symbolName)
@@ -72,7 +72,7 @@ export function Layout() {
                   </div>
 
                   <h2 className="text-lg font-semibold tracking-tight">{selectedSymbolName}</h2>
-                  <p className="text-muted-foreground text-sm">Indicadores multi-timeframe com base nos dados atuais do MetaTrader 5.</p>
+                  <p className="text-muted-foreground text-sm">Multi-timeframe indicators based on the latest MetaTrader 5 data.</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-3 2xl:grid-cols-4">

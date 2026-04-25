@@ -116,7 +116,15 @@ This starts:
 - the Python desktop app in development mode
 - automatic Python restart when files inside `src/` change
 
-### 3. Build the desktop app
+### 3. Enable local Git hooks
+
+```powershell
+uv run python -m src.scripts.setup_git_hooks
+```
+
+This configures `core.hooksPath` to use the repository hook in `.githooks/commit-msg`, so invalid commit messages are rejected before the commit is created.
+
+### 4. Build the desktop app
 
 ```powershell
 uv run python -m src.scripts.build
@@ -189,6 +197,7 @@ Examples:
 Typical usage:
 
 ```powershell
+uv run python -m src.scripts.setup_git_hooks
 git add .
 git commit -m "fix(ui): prevent pywebview callback crash"
 git push origin main

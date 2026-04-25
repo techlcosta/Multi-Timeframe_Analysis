@@ -95,7 +95,7 @@ def _calculate_timeframe_indicators(
     results: TimeframeIndicators = {
         "bb_breakout": {
             "signal": "NEUTRAL",
-            "status": "DENTRO_DAS_BANDAS",
+            "status": "INSIDE_BANDS",
             "value": None,
             "upper": None,
             "middle": None,
@@ -117,7 +117,7 @@ def _calculate_timeframe_indicators(
         },
         "pivot_point": {
             "signal": "NEUTRAL",
-            "status": "NO_PIVO",
+            "status": "AT_PIVOT",
             "value": None,
             "pivot": None,
             "resistance_1": None,
@@ -149,7 +149,7 @@ def _calculate_timeframe_indicators(
         "williams_r": {"value": None, "length": 14, "series": []},
         "moving_average_cross": {
             "signal": "NEUTRAL",
-            "status": "MISTO",
+            "status": "MIXED",
             "value": None,
             "ema_9": None,
             "ema_21": None,
@@ -163,7 +163,7 @@ def _calculate_timeframe_indicators(
         },
         "vwap_bands": {
             "signal": "NEUTRAL",
-            "status": "SEM_VWAP",
+            "status": "NO_VWAP",
             "value": None,
             "vwap": None,
             "upper_1": None,

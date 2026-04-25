@@ -24,7 +24,7 @@ class BBBreakoutResult(TypedDict):
 def _empty_result(*, length: int, std_dev: int) -> BBBreakoutResult:
     return {
         "signal": "NEUTRAL",
-        "status": "DENTRO_DAS_BANDAS",
+        "status": "INSIDE_BANDS",
         "value": None,
         "upper": None,
         "middle": None,
@@ -74,28 +74,28 @@ def calc_bb_breakout(
     proximity_threshold = 0.18
 
     signal: SignalName = "NEUTRAL"
-    status = "DENTRO_DAS_BANDAS"
+    status = "INSIDE_BANDS"
 
     if close_value <= lower_value:
         signal = "BUY"
-        status = "ROMPEU_BANDA_INFERIOR"
+        status = "BROKE_LOWER_BAND"
     elif close_value >= upper_value:
         signal = "SELL"
-        status = "ROMPEU_BANDA_SUPERIOR"
+        status = "BROKE_UPPER_BAND"
     elif close_value > middle_value:
         if upper_proximity <= proximity_threshold:
             signal = "SELL"
-            status = "ACIMA_DA_MEDIA_PERTO_BANDA_SUPERIOR"
+            status = "ABOVE_MIDDLE_NEAR_UPPER_BAND"
         else:
             signal = "BUY"
-            status = "ACIMA_DA_MEDIA_LONGE_BANDA_SUPERIOR"
+            status = "ABOVE_MIDDLE_FAR_FROM_UPPER_BAND"
     elif close_value < middle_value:
         if lower_proximity <= proximity_threshold:
             signal = "BUY"
-            status = "ABAIXO_DA_MEDIA_PERTO_BANDA_INFERIOR"
+            status = "BELOW_MIDDLE_NEAR_LOWER_BAND"
         else:
             signal = "SELL"
-            status = "ABAIXO_DA_MEDIA_LONGE_BANDA_INFERIOR"
+            status = "BELOW_MIDDLE_FAR_FROM_LOWER_BAND"
 
     return {
         "signal": signal,

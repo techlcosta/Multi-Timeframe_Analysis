@@ -80,16 +80,16 @@ def get_frontend_dist_index_path() -> Path:
 
 
 def add_settings_cli_arguments(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--mode", choices=["dev", "prod"], default=None, help="Modo frontend")
-    parser.add_argument("--dev-mode", action="store_true", default=None, help="Atalho para mode=dev")
-    parser.add_argument("--dev-url", default=None, help="URL do frontend em dev")
-    parser.add_argument("--vite-port", type=int, default=None, help="Porta do Vite")
+    parser.add_argument("--mode", choices=["dev", "prod"], default=None, help="Frontend mode")
+    parser.add_argument("--dev-mode", action="store_true", default=None, help="Shortcut for mode=dev")
+    parser.add_argument("--dev-url", default=None, help="Frontend URL in dev mode")
+    parser.add_argument("--vite-port", type=int, default=None, help="Vite port")
 
-    parser.add_argument("--window-title", default=None, help="Titulo da janela")
-    parser.add_argument("--window-width", type=int, default=None, help="Largura da janela")
-    parser.add_argument("--window-height", type=int, default=None, help="Altura da janela")
-    parser.add_argument("--window-min-width", type=int, default=None, help="Largura minima")
-    parser.add_argument("--window-min-height", type=int, default=None, help="Altura minima")
+    parser.add_argument("--window-title", default=None, help="Window title")
+    parser.add_argument("--window-width", type=int, default=None, help="Window width")
+    parser.add_argument("--window-height", type=int, default=None, help="Window height")
+    parser.add_argument("--window-min-width", type=int, default=None, help="Minimum window width")
+    parser.add_argument("--window-min-height", type=int, default=None, help="Minimum window height")
 
 
 def resolve_frontend_mode(cli_args: argparse.Namespace | None = None) -> Literal["dev", "prod"]:
@@ -128,7 +128,7 @@ def load_settings(cli_args: argparse.Namespace | None = None) -> AppSettings:
     else:
         if not dist_index_path.exists():
             raise FileNotFoundError(
-                f"Frontend build nao encontrado em: {dist_index_path}. Build o frontend antes de iniciar em modo prod."
+                f"Frontend build not found at: {dist_index_path}. Build the frontend before starting in prod mode."
             )
         entry_url = dist_index_path.as_uri()
 
@@ -180,7 +180,7 @@ def _get_cli(cli_args: argparse.Namespace | None, name: str) -> CliScalar | None
     if isinstance(value, (str, int, float, bool)):
         return value
 
-    raise TypeError(f"valor de CLI nao suportado para {name}: {type(value).__name__}")
+    raise TypeError(f"unsupported CLI value for {name}: {type(value).__name__}")
 
 
 def _read_env(key: str) -> str | None:
@@ -205,7 +205,7 @@ def _pick_str(cli_args: argparse.Namespace | None, cli_name: str | None, env_key
             value = str(cli_value).strip()
             if value:
                 return value
-            raise ValueError(f"valor invalido em --{cli_name.replace('_', '-')}: vazio")
+            raise ValueError(f"invalid value for --{cli_name.replace('_', '-')}: empty")
 
     env_value = _read_env(env_key)
     if env_value is not None:
@@ -232,7 +232,7 @@ def _parse_mode(raw: str) -> Literal["dev", "prod"]:
         return "dev"
     if mode == "prod":
         return "prod"
-    raise ValueError(f"modo invalido: {raw!r}. Use 'dev' ou 'prod'.")
+    raise ValueError(f"invalid mode: {raw!r}. Use 'dev' or 'prod'.")
 
 
 def _parse_bool(raw: str) -> bool:
@@ -241,13 +241,13 @@ def _parse_bool(raw: str) -> bool:
         return True
     if value in _FALSE_VALUES:
         return False
-    raise ValueError(f"booleano invalido: {raw!r}")
+    raise ValueError(f"invalid boolean: {raw!r}")
 
 
 def _validate_window(window: WindowSettings) -> None:
     if window.width <= 0 or window.height <= 0:
-        raise ValueError("window width/height devem ser maiores que zero")
+        raise ValueError("window width/height must be greater than zero")
     if window.min_width <= 0 or window.min_height <= 0:
-        raise ValueError("window min_width/min_height devem ser maiores que zero")
+        raise ValueError("window min_width/min_height must be greater than zero")
     if window.width < window.min_width or window.height < window.min_height:
-        raise ValueError("window width/height nao podem ser menores que min_width/min_height")
+        raise ValueError("window width/height cannot be smaller than min_width/min_height")

@@ -35,11 +35,11 @@ const INDICATOR_META: Record<IndicatorName, { short: string; name: string }> = {
   },
   support_resistance: {
     short: 'Support / Resistance',
-    name: 'Reacao em niveis-chave'
+    name: 'Reaction at key levels'
   },
   pivot_point: {
     short: 'Pivot Point',
-    name: 'Pivo classico'
+    name: 'Classic pivot'
   },
   adx: {
     short: 'ADX',
@@ -59,38 +59,38 @@ const INDICATOR_META: Record<IndicatorName, { short: string; name: string }> = {
   },
   vwap_bands: {
     short: 'VWAP Bands',
-    name: 'VWAP com bandas 1x e 2x'
+    name: 'VWAP with 1x and 2x bands'
   }
 }
 
 const STATUS_LABELS: Record<string, string> = {
-  DENTRO_DAS_BANDAS: 'Nas bandas',
-  ROMPEU_BANDA_INFERIOR: 'Breakout inf.',
-  ROMPEU_BANDA_SUPERIOR: 'Breakout sup.',
-  ACIMA_DA_MEDIA: 'Acima media',
-  ABAIXO_DA_MEDIA: 'Abaixo media',
-  ACIMA_DA_MEDIA_LONGE_BANDA_SUPERIOR: 'Acima media',
-  ACIMA_DA_MEDIA_PERTO_BANDA_SUPERIOR: 'Perto banda sup.',
-  ABAIXO_DA_MEDIA_LONGE_BANDA_INFERIOR: 'Abaixo media',
-  ABAIXO_DA_MEDIA_PERTO_BANDA_INFERIOR: 'Perto banda inf.',
-  DEFENDEU_SUPORTE: 'Suporte ok',
-  REJEITOU_RESISTENCIA: 'Resistencia',
-  PRESSIONANDO_RESISTENCIA: 'Pressao res.',
-  PRESSIONANDO_SUPORTE: 'Pressao sup.',
+  INSIDE_BANDS: 'Inside bands',
+  BROKE_LOWER_BAND: 'Lower band break',
+  BROKE_UPPER_BAND: 'Upper band break',
+  ABOVE_MIDDLE: 'Above middle',
+  BELOW_MIDDLE: 'Below middle',
+  ABOVE_MIDDLE_FAR_FROM_UPPER_BAND: 'Above middle',
+  ABOVE_MIDDLE_NEAR_UPPER_BAND: 'Near upper band',
+  BELOW_MIDDLE_FAR_FROM_LOWER_BAND: 'Below middle',
+  BELOW_MIDDLE_NEAR_LOWER_BAND: 'Near lower band',
+  HELD_SUPPORT: 'Support held',
+  REJECTED_RESISTANCE: 'Resistance rejected',
+  PRESSING_RESISTANCE: 'Pressing resistance',
+  PRESSING_SUPPORT: 'Pressing support',
   RANGE: 'Range',
-  ACIMA_DO_PIVO: 'Acima pivo',
-  ABAIXO_DO_PIVO: 'Abaixo pivo',
-  NO_PIVO: 'No pivo',
-  ALINHADO_PARA_COMPRA: 'Compra alinhada',
-  ALINHADO_PARA_VENDA: 'Venda alinhada',
-  MISTO: 'Neutro',
-  SEM_VWAP: 'Sem VWAP',
-  ACIMA_BANDA_2: 'Acima banda 2',
-  ABAIXO_BANDA_2: 'Abaixo banda 2',
-  ACIMA_BANDA_1: 'Acima banda 1',
-  ABAIXO_BANDA_1: 'Abaixo banda 1',
-  ACIMA_VWAP: 'Acima VWAP',
-  ABAIXO_VWAP: 'Abaixo VWAP'
+  ABOVE_PIVOT: 'Above pivot',
+  BELOW_PIVOT: 'Below pivot',
+  AT_PIVOT: 'At pivot',
+  ALIGNED_FOR_BUY: 'Bullish alignment',
+  ALIGNED_FOR_SELL: 'Bearish alignment',
+  MIXED: 'Neutral',
+  NO_VWAP: 'No VWAP',
+  ABOVE_BAND_2: 'Above band 2',
+  BELOW_BAND_2: 'Below band 2',
+  ABOVE_BAND_1: 'Above band 1',
+  BELOW_BAND_1: 'Below band 1',
+  ABOVE_VWAP: 'Above VWAP',
+  BELOW_VWAP: 'Below VWAP'
 }
 
 interface IndicatorCardProps {
@@ -407,7 +407,7 @@ function buildAdxTile(timeframe: IndicatorTimeframe, data: TimeframeIndicators |
 function buildMovingAverageCrossTile(timeframe: IndicatorTimeframe, data: TimeframeIndicators | undefined): IndicatorTileViewModel {
   const result: MovingAverageCrossResult = data?.moving_average_cross ?? {
     signal: 'NEUTRAL',
-    status: 'MISTO',
+    status: 'MIXED',
     value: null,
     ema_9: null,
     ema_21: null,
@@ -468,7 +468,7 @@ function buildMovingAverageCrossTile(timeframe: IndicatorTimeframe, data: Timefr
 function buildVwapBandsTile(timeframe: IndicatorTimeframe, data: TimeframeIndicators | undefined): IndicatorTileViewModel {
   const result: VWAPBandsResult = data?.vwap_bands ?? {
     signal: 'NEUTRAL',
-    status: 'SEM_VWAP',
+    status: 'NO_VWAP',
     value: null,
     vwap: null,
     upper_1: null,
@@ -548,7 +548,7 @@ function buildVwapBandsTile(timeframe: IndicatorTimeframe, data: TimeframeIndica
 function buildBbBreakoutTile(timeframe: IndicatorTimeframe, data: TimeframeIndicators | undefined): IndicatorTileViewModel {
   const result: BBBreakoutResult = data?.bb_breakout ?? {
     signal: 'NEUTRAL',
-    status: 'DENTRO_DAS_BANDAS',
+    status: 'INSIDE_BANDS',
     value: null,
     upper: null,
     middle: null,
@@ -646,7 +646,7 @@ function buildSupportResistanceTile(timeframe: IndicatorTimeframe, data: Timefra
 function buildPivotPointTile(timeframe: IndicatorTimeframe, data: TimeframeIndicators | undefined): IndicatorTileViewModel {
   const result: PivotPointResult = data?.pivot_point ?? {
     signal: 'NEUTRAL',
-    status: 'NO_PIVO',
+    status: 'AT_PIVOT',
     value: null,
     pivot: null,
     resistance_1: null,

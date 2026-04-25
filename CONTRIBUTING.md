@@ -53,6 +53,7 @@ Rules:
 Use the standard Git flow directly:
 
 ```powershell
+uv run python -m src.scripts.setup_git_hooks
 git add .
 git commit -m "fix(ui): prevent pywebview callback crash"
 git push origin main
@@ -83,4 +84,12 @@ git config --global commit.template <absolute-path-to-your-template>
 
 ## Validation
 
-GitHub Actions validates commit messages on pushes and pull requests using the rules from `commitlint.config.cjs`.
+Commit messages are validated locally by the repository `commit-msg` hook before the commit is created.
+
+To enable the hook for your current clone:
+
+```powershell
+uv run python -m src.scripts.setup_git_hooks
+```
+
+The hook uses [src/scripts/validate_commit_message.py](./src/scripts/validate_commit_message.py) and blocks invalid commit messages immediately, instead of waiting for a GitHub workflow failure.

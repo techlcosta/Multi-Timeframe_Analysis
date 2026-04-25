@@ -25,7 +25,7 @@ class VWAPBandsResult(TypedDict):
 def _empty_result() -> VWAPBandsResult:
     return {
         "signal": "NEUTRAL",
-        "status": "SEM_VWAP",
+        "status": "NO_VWAP",
         "value": None,
         "vwap": None,
         "upper_1": None,
@@ -81,22 +81,22 @@ def calc_vwap_bands(dataframe: pd.DataFrame) -> VWAPBandsResult:
 
     if close_value >= upper_2:
         signal = "SELL"
-        status = "ACIMA_BANDA_2"
+        status = "ABOVE_BAND_2"
     elif close_value <= lower_2:
         signal = "BUY"
-        status = "ABAIXO_BANDA_2"
+        status = "BELOW_BAND_2"
     elif close_value >= upper_1:
         signal = "SELL"
-        status = "ACIMA_BANDA_1"
+        status = "ABOVE_BAND_1"
     elif close_value <= lower_1:
         signal = "BUY"
-        status = "ABAIXO_BANDA_1"
+        status = "BELOW_BAND_1"
     elif close_value > vwap_value:
         signal = "BUY"
-        status = "ACIMA_VWAP"
+        status = "ABOVE_VWAP"
     elif close_value < vwap_value:
         signal = "SELL"
-        status = "ABAIXO_VWAP"
+        status = "BELOW_VWAP"
 
     return {
         "signal": signal,

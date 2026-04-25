@@ -1,6 +1,5 @@
 import argparse
 import atexit
-import ctypes
 import logging
 import sys
 
@@ -9,12 +8,10 @@ import webview
 from src.config import add_settings_cli_arguments, load_settings
 from src.database import init_database
 from src.MQL import initialize
+from src.runtime import SingleInstanceManager
 from src.services.api import api
 
 logger = logging.getLogger(__name__)
-
-_ERROR_ALREADY_EXISTS = 183
-_mutex_handle: int | None = None
 
 
 def configure_logging() -> None:
@@ -38,53 +35,27 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def acquire_single_instance_lock(app_id: str) -> bool:
-    global _mutex_handle
-
-    if not sys.platform.startswith("win"):
-        return True
-
-    kernel32 = ctypes.windll.kernel32
-    mutex_name = f"Local\\{app_id}"
-    handle = kernel32.CreateMutexW(None, False, mutex_name)
-
-    if not handle:
-        raise OSError("Nao foi possivel criar o mutex de instancia unica.")
-
-    last_error = kernel32.GetLastError()
-    if last_error == _ERROR_ALREADY_EXISTS:
-        kernel32.CloseHandle(handle)
-        return False
-
-    _mutex_handle = int(handle)
-    return True
-
-
-def release_single_instance_lock() -> None:
-    global _mutex_handle
-
-    if not _mutex_handle or not sys.platform.startswith("win"):
-        return
-
-    ctypes.windll.kernel32.CloseHandle(_mutex_handle)
-    _mutex_handle = None
-
-
 def main() -> None:
     configure_stdio()
     configure_logging()
+    instance_manager: SingleInstanceManager | None = None
 
     try:
         args = parse_args()
         settings = load_settings(args)
         dev_mode = settings.frontend.mode == "dev"
-        app_id = "FXStrategies.SingleInstance"
 
-        if not acquire_single_instance_lock(app_id):
-            logger.warning("Aplicacao ja esta em execucao. Nova instancia sera encerrada.")
-            raise SystemExit(0)
+        if sys.platform.startswith("win") and not dev_mode:
+            instance_manager = SingleInstanceManager(
+                app_id="FXStrategies",
+                window_title=settings.window.title,
+            )
 
-        atexit.register(release_single_instance_lock)
+            if not instance_manager.acquire_or_activate_existing():
+                raise SystemExit(0)
+
+            instance_manager.start_listener()
+            atexit.register(instance_manager.release)
 
         init_database()
         logger.info("Inicializando FX Strategies (mode=%s)", settings.frontend.mode)

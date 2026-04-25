@@ -8,9 +8,18 @@ import subprocess
 import sys
 from pathlib import Path
 
-APP_NAME = "FXStrategies"
-
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
+if str(PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.config.config import VERSION as APP_VERSION
+
+APP_NAME = "FXStrategies"
+APP_DISPLAY_NAME = "FX Strategies"
+APP_COMPANY_NAME = "FX Strategies"
+APP_DESCRIPTION = "Desktop multi-timeframe trading dashboard powered by MetaTrader 5."
+APP_COPYRIGHT = "Copyright (c) FX Strategies"
+
 FRONTEND_DIR = PROJECT_ROOT / "frontend"
 FRONTEND_DIST_DIR = FRONTEND_DIR / "dist"
 SRC_MAIN_FILE = PROJECT_ROOT / "src" / "main.py"
@@ -18,6 +27,7 @@ SRC_MAIN_FILE = PROJECT_ROOT / "src" / "main.py"
 PYINSTALLER_DIST_DIR = PROJECT_ROOT / "dist"
 PYINSTALLER_WORK_DIR = PROJECT_ROOT / "build"
 ENTRY_STUB = PROJECT_ROOT / "__pyinstaller_entry__.py"
+VERSION_INFO_FILE = PROJECT_ROOT / "__pyinstaller_version_info.txt"
 
 
 def run_command(cmd: list[str], cwd: Path | None = None) -> None:
@@ -101,6 +111,61 @@ def remove_entry_stub() -> None:
         ENTRY_STUB.unlink()
 
 
+def normalize_windows_version(version: str) -> tuple[int, int, int, int]:
+    raw_parts = [part.strip() for part in version.split(".")]
+    numeric_parts = [int(part) for part in raw_parts if part.isdigit()]
+
+    while len(numeric_parts) < 4:
+        numeric_parts.append(0)
+
+    major, minor, patch, build = numeric_parts[:4]
+    return (major, minor, patch, build)
+
+
+def write_version_info_file() -> None:
+    version_tuple = normalize_windows_version(APP_VERSION)
+    version_text = ".".join(str(part) for part in version_tuple)
+
+    content = f"""\
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers={version_tuple},
+    prodvers={version_tuple},
+    mask=0x3F,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+  ),
+  kids=[
+    StringFileInfo([
+      StringTable(
+        '040904B0',
+        [
+          StringStruct('CompanyName', '{APP_COMPANY_NAME}'),
+          StringStruct('FileDescription', '{APP_DESCRIPTION}'),
+          StringStruct('FileVersion', '{version_text}'),
+          StringStruct('InternalName', '{APP_NAME}'),
+          StringStruct('LegalCopyright', '{APP_COPYRIGHT}'),
+          StringStruct('OriginalFilename', '{APP_NAME}.exe'),
+          StringStruct('ProductName', '{APP_DISPLAY_NAME}'),
+          StringStruct('ProductVersion', '{version_text}')
+        ]
+      )
+    ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
+"""
+    VERSION_INFO_FILE.write_text(content, encoding="utf-8")
+
+
+def remove_version_info_file() -> None:
+    if VERSION_INFO_FILE.exists():
+        VERSION_INFO_FILE.unlink()
+
+
 def find_icon() -> Path | None:
     explicit_logo = PROJECT_ROOT / "src" / "assets" / "logo.ico"
     if explicit_logo.exists():
@@ -130,6 +195,7 @@ def build_executable(onefile: bool) -> Path:
     print("\n[3/3] Gerando executavel (PyInstaller)...")
     clean_pyinstaller_dirs()
     write_entry_stub()
+    write_version_info_file()
 
     data_separator = ";" if sys.platform.startswith("win") else ":"
     add_data = f"{FRONTEND_DIST_DIR}{data_separator}frontend/dist"
@@ -143,10 +209,15 @@ def build_executable(onefile: bool) -> Path:
         "--name",
         APP_NAME,
         "--windowed",
+        "--specpath",
+        str(PYINSTALLER_WORK_DIR),
         "--distpath",
         str(PYINSTALLER_DIST_DIR),
         "--workpath",
         str(PYINSTALLER_WORK_DIR),
+        "--version-file",
+        str(VERSION_INFO_FILE),
+        "--noupx",
         "--add-data",
         add_data,
         "--collect-all",
@@ -169,6 +240,7 @@ def build_executable(onefile: bool) -> Path:
         run_command(cmd, cwd=PROJECT_ROOT)
     finally:
         remove_entry_stub()
+        remove_version_info_file()
 
     exe_path = (
         PYINSTALLER_DIST_DIR / f"{APP_NAME}.exe"

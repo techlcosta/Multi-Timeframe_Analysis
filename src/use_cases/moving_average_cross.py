@@ -24,7 +24,7 @@ class MovingAverageCrossResult(TypedDict):
 def _empty_result() -> MovingAverageCrossResult:
     return {
         "signal": "NEUTRAL",
-        "status": "MISTO",
+        "status": "MIXED",
         "value": None,
         "ema_9": None,
         "ema_21": None,
@@ -45,7 +45,7 @@ def calc_moving_average_cross(dataframe: pd.DataFrame) -> MovingAverageCrossResu
     source_frame = dataframe.copy()
     close_series = source_frame["close"].astype(float)
     # Use pandas ewm directly so every bar has an EMA value and the mini chart
-    # can render a proportional history even for long periods like EMA 200.
+    # can render proportional history even for long periods like EMA 200.
     source_frame["ema_9"] = close_series.ewm(span=9, adjust=False, min_periods=1).mean()
     source_frame["ema_21"] = close_series.ewm(span=21, adjust=False, min_periods=1).mean()
     source_frame["ema_55"] = close_series.ewm(span=55, adjust=False, min_periods=1).mean()
@@ -66,14 +66,14 @@ def calc_moving_average_cross(dataframe: pd.DataFrame) -> MovingAverageCrossResu
     bearish_stack = close_value <= ema_9 < ema_21 < ema_55 < ema_200
 
     signal: SignalName = "NEUTRAL"
-    status = "MISTO"
+    status = "MIXED"
 
     if bullish_stack:
         signal = "BUY"
-        status = "ALINHADO_PARA_COMPRA"
+        status = "ALIGNED_FOR_BUY"
     elif bearish_stack:
         signal = "SELL"
-        status = "ALINHADO_PARA_VENDA"
+        status = "ALIGNED_FOR_SELL"
 
     return {
         "signal": signal,

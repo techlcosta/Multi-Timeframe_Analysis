@@ -28,7 +28,7 @@ function CardSymbolComponent({ symbols }: CardSymbolProps) {
       <CardHeader className="border-border/60 border-b">
         <CardTitle>Symbols</CardTitle>
         <CardDescription>
-          {symbols.length > 0 ? `${symbols.length} simbolo${symbols.length > 1 ? 's' : ''} salvo${symbols.length > 1 ? 's' : ''}` : 'Nenhum simbolo salvo ainda.'}
+          {symbols.length > 0 ? `${symbols.length} saved symbol${symbols.length > 1 ? 's' : ''}` : 'No saved symbols yet.'}
         </CardDescription>
       </CardHeader>
 
@@ -45,8 +45,8 @@ function CardSymbolComponent({ symbols }: CardSymbolProps) {
                     variant="ghost"
                     size="icon-xs"
                     type="button"
-                    aria-label={`Remover simbolo ${symbol.name}`}
-                    title={`Remover ${symbol.name}`}
+                    aria-label={`Remove symbol ${symbol.name}`}
+                    title={`Remove ${symbol.name}`}
                     disabled={isRemoving}
                     onClick={() => handleRemove(symbol.name)}
                     className="text-muted-foreground size-4 cursor-pointer rounded-full p-0 hover:text-red-500"
@@ -58,7 +58,7 @@ function CardSymbolComponent({ symbols }: CardSymbolProps) {
             })}
           </div>
         ) : (
-          <p className="text-muted-foreground text-sm">Adicione simbolos no seletor acima para comecar.</p>
+          <p className="text-muted-foreground text-sm">Add symbols from the selector above to get started.</p>
         )}
       </CardContent>
     </Card>

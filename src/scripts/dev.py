@@ -66,10 +66,10 @@ def resolve_install_cmd() -> list[str]:
 
     if PNPM_LOCK_FILE.exists():
         raise FileNotFoundError(
-            "Projeto frontend usa pnpm-lock.yaml, mas pnpm/corepack nao foram encontrados no PATH."
+            "The frontend project uses pnpm-lock.yaml, but pnpm/corepack were not found in PATH."
         )
 
-    raise FileNotFoundError("Nao foi possivel encontrar pnpm ou corepack no PATH.")
+    raise FileNotFoundError("Could not find pnpm or corepack in PATH.")
 
 
 def resolve_dev_cmd() -> list[str]:
@@ -79,21 +79,21 @@ def resolve_dev_cmd() -> list[str]:
 
     if PNPM_LOCK_FILE.exists():
         raise FileNotFoundError(
-            "Projeto frontend usa pnpm-lock.yaml, mas pnpm/corepack nao foram encontrados no PATH."
+            "The frontend project uses pnpm-lock.yaml, but pnpm/corepack were not found in PATH."
         )
 
-    raise FileNotFoundError("Nao foi possivel encontrar pnpm ou corepack no PATH.")
+    raise FileNotFoundError("Could not find pnpm or corepack in PATH.")
 
 
 def ensure_frontend_deps() -> None:
     if not FRONTEND_DIR.exists():
-        raise FileNotFoundError(f"Diretorio frontend nao encontrado: {FRONTEND_DIR}")
+        raise FileNotFoundError(f"Frontend directory not found: {FRONTEND_DIR}")
 
     if NODE_MODULES_DIR.exists():
         return
 
     cmd = resolve_install_cmd()
-    logger.info("Instalando dependencias do frontend...")
+    logger.info("Installing frontend dependencies...")
     subprocess.run(cmd, cwd=FRONTEND_DIR, check=True, shell=False)
 
 
@@ -106,14 +106,14 @@ def vite_is_up(url: str) -> bool:
 
 
 def wait_for_vite(url: str, max_wait_sec: float = 30.0) -> None:
-    logger.info("Aguardando Vite ficar pronto em %s...", url)
+    logger.info("Waiting for Vite to be ready at %s...", url)
     start = time.time()
     while time.time() - start < max_wait_sec:
         if vite_is_up(url):
-            logger.info("Vite pronto.")
+            logger.info("Vite is ready.")
             return
         time.sleep(0.5)
-    raise RuntimeError(f"Vite nao respondeu em {max_wait_sec:.1f}s ({url})")
+    raise RuntimeError(f"Vite did not respond within {max_wait_sec:.1f}s ({url})")
 
 
 def health_check_worker(url: str, check_interval: float = 3.0) -> None:
@@ -123,13 +123,13 @@ def health_check_worker(url: str, check_interval: float = 3.0) -> None:
     while not _stop_health_check.is_set():
         if vite_is_up(url):
             if consecutive_failures > 0:
-                logger.info("Vite recuperou.")
+                logger.info("Vite recovered.")
             consecutive_failures = 0
         else:
             consecutive_failures += 1
             if consecutive_failures >= max_failures:
                 logger.warning(
-                    "Vite aparenta estar indisponivel (%d falhas seguidas).",
+                    "Vite appears to be unavailable (%d consecutive failures).",
                     consecutive_failures,
                 )
 
@@ -138,7 +138,7 @@ def health_check_worker(url: str, check_interval: float = 3.0) -> None:
 
 def start_vite() -> subprocess.Popen:
     cmd = resolve_dev_cmd()
-    logger.info("Iniciando Vite")
+    logger.info("Starting Vite")
     return subprocess.Popen(
         cmd,
         cwd=FRONTEND_DIR,
@@ -188,12 +188,12 @@ def cleanup_on_exit() -> None:
         _health_check_thread.join(timeout=2.0)
 
     if _app_proc:
-        logger.info("Encerrando app Python...")
+        logger.info("Stopping Python app...")
         kill_tree(_app_proc)
         _app_proc = None
 
     if _vite_proc:
-        logger.info("Encerrando Vite...")
+        logger.info("Stopping Vite...")
         kill_tree(_vite_proc)
         _vite_proc = None
 
@@ -206,7 +206,7 @@ def start_python_app() -> subprocess.Popen:
     env["PYTHONUNBUFFERED"] = "1"
 
     cmd = [sys.executable, "-m", "src.main", "--mode", "dev"]
-    logger.info("Iniciando app Python")
+    logger.info("Starting Python app")
     return subprocess.Popen(
         cmd,
         cwd=ROOT_DIR,
@@ -223,7 +223,7 @@ def restart_python_app() -> None:
     global _app_proc
 
     if _app_proc and _app_proc.poll() is None:
-        logger.info("Reiniciando app Python...")
+        logger.info("Restarting Python app...")
         kill_tree(_app_proc)
 
     _app_proc = start_python_app()
@@ -235,7 +235,7 @@ def python_hot_reload_loop() -> None:
     existing_paths = [path for path in WATCH_PATHS if path.exists()]
     if not existing_paths:
         raise FileNotFoundError(
-            "Nenhum diretorio de watch encontrado (esperado: src/)."
+            "No watch directory found (expected: src/)."
         )
 
     for changes in watch(*existing_paths):
@@ -251,7 +251,7 @@ def dev() -> None:
     global _vite_proc, _health_check_thread
 
     configure_logging()
-    logger.info("Modo desenvolvimento iniciado")
+    logger.info("Development mode started")
 
     try:
         ensure_frontend_deps()
@@ -268,17 +268,17 @@ def dev() -> None:
 
         python_hot_reload_loop()
     except KeyboardInterrupt:
-        logger.info("Interrompido pelo usuario.")
+        logger.info("Interrupted by user.")
     except Exception as err:
         if "corepack" in str(err).lower() or "pnpm" in str(err).lower():
             logger.error(
-                "Dependencia de frontend indisponivel. Instale/ative pnpm (ex.: `corepack enable pnpm`) e confirme acesso ao registry npm."
+                "Frontend dependency unavailable. Install/enable pnpm (for example, `corepack enable pnpm`) and confirm access to the npm registry."
             )
-        logger.exception("Falha no runner de desenvolvimento.")
+        logger.exception("Development runner failed.")
         raise SystemExit(1) from err
     finally:
         cleanup_on_exit()
-        logger.info("Dev runner encerrado.")
+        logger.info("Development runner stopped.")
 
 
 if __name__ == "__main__":
