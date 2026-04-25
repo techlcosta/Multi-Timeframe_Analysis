@@ -78,7 +78,7 @@ export function ThemeToggle() {
   }, [])
 
   const nextTheme = isDark ? 'light' : 'dark'
-  const actionLabel = nextTheme === 'dark' ? 'Ativar tema escuro' : 'Ativar tema claro'
+  const actionLabel = nextTheme === 'dark' ? 'Enable dark theme' : 'Enable light theme'
 
   return (
     <Button
