@@ -177,7 +177,7 @@ fx_strategies/
 
 ## Commit Convention
 
-This repository follows a Conventional Commits style for commit messages.
+This repository follows a Conventional Commits style for commit messages, using the normal Git workflow.
 
 Examples:
 
@@ -185,6 +185,14 @@ Examples:
 - `fix(ui): prevent pywebview callback crash`
 - `docs(readme): add multilingual project overview`
 - `ci(release): build Windows binary on version tags`
+
+Typical usage:
+
+```powershell
+git add .
+git commit -m "fix(ui): prevent pywebview callback crash"
+git push origin main
+```
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full convention and local template setup.
 

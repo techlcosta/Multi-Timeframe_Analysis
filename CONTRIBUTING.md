@@ -48,6 +48,25 @@ Rules:
 - Do not end the subject with a period.
 - Keep the header at or below 100 characters.
 
+## Recommended Workflow
+
+Use the standard Git flow directly:
+
+```powershell
+git add .
+git commit -m "fix(ui): prevent pywebview callback crash"
+git push origin main
+```
+
+More examples:
+
+```powershell
+git commit -m "feat(api): add structured MT5 error responses"
+git commit -m "docs(readme): improve project presentation"
+git commit -m "ci(release): fix pnpm setup in GitHub Actions"
+git commit -m "chore(repo): normalize line endings"
+```
+
 ## Local Commit Template
 
 To use the included commit template locally:
@@ -61,37 +80,6 @@ To apply it globally on your machine:
 ```powershell
 git config --global commit.template <absolute-path-to-your-template>
 ```
-
-## Commit Helper
-
-The repository also includes a small helper to generate a valid commit message and call `git commit` for you:
-
-```powershell
-uv run python -m src.scripts.commit fix --scope ui "prevent pywebview callback crash"
-```
-
-Useful examples:
-
-```powershell
-uv run python -m src.scripts.commit feat --scope api "add structured MT5 error responses"
-uv run python -m src.scripts.commit docs --scope readme "improve project presentation"
-uv run python -m src.scripts.commit ci --scope release "build Windows binary on version tags"
-uv run python -m src.scripts.commit fix --scope ui "prevent pywebview callback crash" --dry-run
-```
-
-If you want an even shorter PowerShell command from the repository root:
-
-```powershell
-.\cc.ps1 fix --scope ui "prevent pywebview callback crash"
-```
-
-Options:
-
-- `--scope <name>` adds an optional kebab-case scope
-- `--breaking` generates `type(scope)!: subject`
-- `--all` passes `-a` to `git commit`
-- `--no-verify` forwards `--no-verify`
-- `--dry-run` only prints the generated message
 
 ## Validation
 
