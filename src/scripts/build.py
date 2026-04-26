@@ -14,7 +14,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from src.config.config import VERSION as APP_VERSION
 
-APP_NAME = "FXStrategies"
+APP_NAME = f"Multi-Timeframe_Analysis_V{APP_VERSION}"
 APP_DISPLAY_NAME = "FX Strategies"
 APP_COMPANY_NAME = "FX Strategies"
 APP_DESCRIPTION = "Desktop multi-timeframe trading dashboard powered by MetaTrader 5."

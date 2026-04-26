@@ -56,11 +56,12 @@ jobs:
         id: asset
         shell: pwsh
         run: |
-          $tag = "${{ github.ref_name }}"
-          $assetName = "FXStrategies-$tag-windows-x64.exe"
-          Copy-Item "dist\FXStrategies.exe" "dist\$assetName" -Force
-          "name=$assetName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
-          "path=dist\$assetName" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          $asset = Get-ChildItem "dist\Multi-Timeframe_Analysis_V*.exe" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $asset) {
+            throw "Executavel de release nao encontrado em dist\\"
+          }
+          "name=$($asset.Name)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "path=$($asset.FullName)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4

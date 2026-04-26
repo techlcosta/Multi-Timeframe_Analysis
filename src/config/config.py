@@ -5,7 +5,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal, TypeAlias
 
-VERSION = "0.1.3"
+VERSION = "0.1.5"
 
 ENV_PREFIX = "FX_STRATEGIES"
 ENV_MODE_KEY = f"{ENV_PREFIX}_MODE"
